@@ -44,8 +44,16 @@ namespace upc {
 
       break;
     case RECT:
+      {
+        unsigned int i;
+        for(i = 0; i < frameLen ; i++){
+          window[i] = 1/frameLen;
+        }
+      }
+      break;
     default:
       window.assign(frameLen, 1);
+      break;
     }
   }
 
