@@ -15,5 +15,5 @@ ylabel('Pitch (Hz)')
 xlabel('Numb Sampler')
 
 subplot(3,1,3)
-plot(c)
-ylabel('Autocorrelació')
+plot(cor)
+ylabel('AutocorrelaciÃ³')
