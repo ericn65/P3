@@ -13,10 +13,10 @@ namespace upc {
     for (unsigned int l = 0; l < r.size(); ++l) {
   		/// \TODO Compute the autocorrelation r[l]
       r[l] = 0;
-      for(unsigned int i = l; i < x.size(); ++i ){
+      for(unsigned int i = l; i < x.size()-l; ++i ){
         r[l] += x[i-l]*x[i];
       }
-      r[l] = r[l]/r.size();
+      r[l] = r[l]/(r.size()-l);
     }
 
     if (r[0] == 0.0F) //to avoid log() and divide zero 
@@ -24,6 +24,7 @@ namespace upc {
   }
 
   void PitchAnalyzer::set_window(Window win_type) {
+
     if (frameLen == 0)
       return;
 
@@ -33,11 +34,11 @@ namespace upc {
     case HAMMING:
       {
         unsigned int n;
-        float a = 0.5432 //VIZCARRO NI IDEA DEL VALOR
-        float b = 0.4592 //ÍDEM
+        float a = 0.5432; //Información obtenida de internet
+        float b = 0.4592; //Ídem
 
         for(n=0; n < frameLen; n++){
-          window[n] = a - b*cos(2*PI*n/(frameLen-1));
+          window[n] = a - b*cos(2*M_PI*n/(frameLen-1));
         }
       }
       /// \TODO Implement the Hamming window
@@ -73,11 +74,9 @@ namespace upc {
     /// \TODO Implement a rule to decide whether the sound is voiced or not.
     /// * You can use the standard features (pot, r1norm, rmaxnorm),
     ///   or compute and use other ones.
-    if(pot < /*POTÈNCIA MÍNMA*/ || r1norm <= /*R1NORM MIINIM*/){
+    if(pot < 0.82 || r1norm <= -65){
       return true;
     }    
-    //Em vull definir la mínima potència, but idk if we have it
-    //somewhere... T'ho deixo així com marcadot
     else{
       return false;
     }
@@ -106,18 +105,22 @@ namespace upc {
     ///	   .
 	/// In either case, the lag should not exceed that of the minimum value of the pitch.
 
-    for(iR = r.begin(); iR != r.end(); ++iR){
+    /*for(iR = r.begin(); iR != r.end(); ++iR){
       if(*iR < 0)
         break;
     }
     if(iR == r.end()){
       iR = r.begin();
     }else{
-      iRMax = /*COM COI ES FA PER A QUE PILLI EL MÀX 
-      DE IR O IREND? I AIXÍ TORNI ENDERERE JEJE*/
-    }
+      iRMax = max_element(iR, iREnd);
+    }*/
+
 
     unsigned int lag = iRMax - r.begin();
+    unsigned int pmin = 60;
+    unsigned int pmax = 300;
+    
+    lag = max_element(r.begin()+pmin, r.begin()+pmax) - r.begin();
 
     float pot = 10 * log10(r[0]);
 
