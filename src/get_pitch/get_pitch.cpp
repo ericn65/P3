@@ -64,6 +64,40 @@ int main(int argc, const char *argv[]) {
   /// \TODO
   /// Preprocess the input signal in order to ease pitch estimation. For instance,
   /// central-clipping or low pass filtering may be used.
+
+  //Low Pass Filter --> no funciona
+  //Filtro promediador sacado de wikipedia: 1/A*(x[n]+x[n-1]) donde alfa=1/A
+  /*float alfa = 0.89; 
+  for(unsigned int p_bajo = 2; p_bajo < x.size(); ++p_bajo){
+    x[p_bajo]= alfa*x[p_bajo] + (1-alfa)*x[p_bajo-1]; 
+  }*/
+
+  //Centre-clipping sin offset --> mejora entre un 5% y 7% el total
+ /* float val_max=*max_element(x.begin(),x.end());
+  float th_clip=0.058*val_max;
+  unsigned int i;
+
+  for(i=0;i<x.size();i++){
+    if(abs(x[i])<=th_clip)
+      x[i]=0;
+  }*/
+
+  //Centre-clipping con offset --> mejora un poco el total respecto la variante sin offset
+  float val_max=*max_element(x.begin(),x.end());
+  float th_clip=0.0485*val_max;
+  unsigned int i;
+
+  for(i=0;i<x.size();i++){
+    if(x[i]>th_clip){
+      x[i]=x[i]-th_clip;
+    } 
+    else if(x[i]<-th_clip){
+      x[i]=x[i]+th_clip;
+    }  
+    else{
+      x[i]=0;
+    }     
+  }
   
   // Iterate for each frame and save values in f0 vector
   vector<float>::iterator iX;
@@ -76,6 +110,23 @@ int main(int argc, const char *argv[]) {
   /// \TODO
   /// Postprocess the estimation in order to supress errors. For instance, a median filter
   /// or time-warping may be used.
+
+  //Median filter
+
+  int fil_size = 5; //Número que nos dá mejor F_Score
+  int fil_center = fil_size/2;
+  float v[fil_size]; 
+  for(unsigned int i = fil_center; i < f0.size()-fil_center; i++){
+    //i es la posición que ha de recorrer por todo el vector f0
+    for(int mediana = -fil_center; mediana <= fil_center; mediana++){
+      v[mediana + fil_center] = f0[i + mediana];
+    }
+    //ordenamos los valores y hacemos la mediana
+    sort(v, v+fil_size);
+    //Cogemos el valor central y lo ponemos en lugar de estas muestras
+    f0[i] = v[fil_center];
+  }
+
 
   // Write f0 contour into the output file
   ofstream os(output_txt);
