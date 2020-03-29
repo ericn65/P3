@@ -24,7 +24,7 @@ Ejercicios básicos
 	 
 	 Hemos realizado este apartado con MARLAB con el siguiente código:
 	 
-	 <img src="img/WhatsApp Image 2020-03-29 at 12.39.31.jpeg" width="640" align="center">	
+	 <img src="matlab1.jpeg" width="640" align="center">	
 
    * Determine el mejor candidato para el periodo de pitch localizando el primer máximo secundario de la
      autocorrelación. Inserte a continuación el código correspondiente.
@@ -47,7 +47,7 @@ Ejercicios básicos
 	    Recuerde configurar los paneles de datos para que el desplazamiento de ventana sea el adecuado, que
 		en esta práctica es de 15 ms.
 
-	<img src="img/WhatsApp Image 2020-03-29 at 12.36.57.jpeg" width="640" align="center">	
+	<img src="wavesurfer1.jpeg" width="640" align="center">	
 
 
 
