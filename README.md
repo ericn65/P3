@@ -81,27 +81,27 @@ Ejercicios básicos
 		 
 		 CÓDIGO:
 		 
-		clc;
-		clear all;
-		close all;
-		fs = 16000;
-		[audioIn, fs] = audioread("pav_2321.wav");
-		[f0, idx] = pitch(double(audioIn), fs);
+			clc;
+			clear all;
+			close all;
+			fs = 16000;
+			[audioIn, fs] = audioread("pav_2321.wav");
+			[f0, idx] = pitch(double(audioIn), fs);
 
-		[cor,l] = xcorr(audioIn);
+			[cor,l] = xcorr(audioIn);
 
-		subplot(3,1,1)
-		plot(audioIn)
-		ylabel('Amplitud')
+			subplot(3,1,1)
+			plot(audioIn)
+			ylabel('Amplitud')
 
-		subplot(3,1,2)
-		plot(idx,f0)
-		ylabel('Pitch (Hz)')
-		xlabel('Numb Sampler')
+			subplot(3,1,2)
+			plot(idx,f0)
+			ylabel('Pitch (Hz)')
+			xlabel('Numb Sampler')
 
-		subplot(3,1,3)
-		plot(cor)
-		ylabel('Autocorrelació')
+			subplot(3,1,3)
+			plot(cor)
+			ylabel('Autocorrelació')
 	
 	<img src="matlab1.jpeg" width="640" align="center">	
 	<img src="matlab2.jpeg" width="640" align="center">
@@ -165,19 +165,19 @@ Ejercicios básicos
 
    * Implemente la regla de decisión sonoro o sordo e inserte el código correspondiente.
    
-	 CÓDIGO:
+		 CÓDIGO:
 	 
-	 bool PitchAnalyzer::unvoiced(float pot, float r1norm, float rmaxnorm) const {
-	    /// \TODO Implement a rule to decide whether the sound is voiced or not.
-	    /// * You can use the standard features (pot, r1norm, rmaxnorm),
-	    ///   or compute and use other ones.
-	    if((pot < -39 || r1norm <= 0.83) && rmaxnorm < 0.55){
-	      return true;
-	    }    
-	    else{
-	      return false;
-	    }
-	  }
+		 bool PitchAnalyzer::unvoiced(float pot, float r1norm, float rmaxnorm) const {
+		    /// \TODO Implement a rule to decide whether the sound is voiced or not.
+		    /// * You can use the standard features (pot, r1norm, rmaxnorm),
+		    ///   or compute and use other ones.
+		    if((pot < -39 || r1norm <= 0.83) && rmaxnorm < 0.55){
+		      return true;
+		    }    
+		    else{
+		      return false;
+		    }
+		  }
 
 - Una vez completados los puntos anteriores, dispondrá de una primera versión del detector de pitch. El 
   resto del trabajo consiste, básicamente, en obtener las mejores prestaciones posibles con él.
@@ -281,40 +281,40 @@ Ejercicios de ampliación
 	*Center Clipping*: esta técnica nos dá una mejora visible de resultado. El código usado es el siguiente:
 
 	CÓDIGO:
-	
-	  //Low Pass Filter --> no funciona
-	  //Filtro promediador sacado de wikipedia: 1/A*(x[n]+x[n-1]) donde alfa=1/A
-	  /*float alfa = 0.89; 
-	  for(unsigned int p_bajo = 2; p_bajo < x.size(); ++p_bajo){
-	    x[p_bajo]= alfa*x[p_bajo] + (1-alfa)*x[p_bajo-1]; 
-	  }*/
-	  
-	 //Centre-clipping sin offset --> mejora entre un 5% y 7% el total
-	 /* float val_max=*max_element(x.begin(),x.end());
-	  float th_clip=0.058*val_max;
-	  unsigned int i;
 
-	  for(i=0;i<x.size();i++){
-	    if(abs(x[i])<=th_clip)
-	      x[i]=0;
-	  }*/
+		  //Low Pass Filter --> no funciona
+		  //Filtro promediador sacado de wikipedia: 1/A*(x[n]+x[n-1]) donde alfa=1/A
+		  /*float alfa = 0.89; 
+		  for(unsigned int p_bajo = 2; p_bajo < x.size(); ++p_bajo){
+		    x[p_bajo]= alfa*x[p_bajo] + (1-alfa)*x[p_bajo-1]; 
+		  }*/
 
-	  //Centre-clipping con offset --> mejora un poco el total respecto la variante sin offset
-	  float val_max=*max_element(x.begin(),x.end());
-	  float th_clip=0.0485*val_max;
-	  unsigned int i;
+		 //Centre-clipping sin offset --> mejora entre un 5% y 7% el total
+		 /* float val_max=*max_element(x.begin(),x.end());
+		  float th_clip=0.058*val_max;
+		  unsigned int i;
 
-	  for(i=0;i<x.size();i++){
-	    if(x[i]>th_clip){
-	      x[i]=x[i]-th_clip;
-	    } 
-	    else if(x[i]<-th_clip){
-	      x[i]=x[i]+th_clip;
-	    }  
-	    else{
-	      x[i]=0;
-	    }     
-	  }
+		  for(i=0;i<x.size();i++){
+		    if(abs(x[i])<=th_clip)
+		      x[i]=0;
+		  }*/
+
+		  //Centre-clipping con offset --> mejora un poco el total respecto la variante sin offset
+		  float val_max=*max_element(x.begin(),x.end());
+		  float th_clip=0.0485*val_max;
+		  unsigned int i;
+
+		  for(i=0;i<x.size();i++){
+		    if(x[i]>th_clip){
+		      x[i]=x[i]-th_clip;
+		    } 
+		    else if(x[i]<-th_clip){
+		      x[i]=x[i]+th_clip;
+		    }  
+		    else{
+		      x[i]=0;
+		    }     
+		  }
 	
 	El filtro paso bajo no lo usamos dado que afecta negativamente al resultado final, tanto el clipping con o sin offset dan buenos resultados pero elegimos el clipping con offset porqué da unas decimas más en el porcentaje total final.
 	
@@ -326,22 +326,22 @@ Ejercicios de ampliación
 	Para programarlo nos hemos basado en el conocimiento de clase y estas 2 webs:
 	https://www.geeksforgeeks.org/noise-removal-using-median-filter-in-c/
 	http://ceur-ws.org/Vol-1543/p1.pdf
-	
-	//Median filter
 
-	  int fil_size = 5; //Número que nos dá mejor F_Score
-	  int fil_center = fil_size/2;
-	  float v[fil_size]; 
-	  for(unsigned int i = fil_center; i < f0.size()-fil_center; i++){
-	    //i es la posición que ha de recorrer por todo el vector f0
-	    for(int mediana = -fil_center; mediana <= fil_center; mediana++){
-	      v[mediana + fil_center] = f0[i + mediana];
-	    }
-	    //ordenamos los valores y hacemos la mediana
-	    sort(v, v+fil_size);
-	    //Cogemos el valor central y lo ponemos en lugar de estas muestras
-	    f0[i] = v[fil_center];
-	  }
+		//Median filter
+
+		  int fil_size = 5; //Número que nos dá mejor F_Score
+		  int fil_center = fil_size/2;
+		  float v[fil_size]; 
+		  for(unsigned int i = fil_center; i < f0.size()-fil_center; i++){
+		    //i es la posición que ha de recorrer por todo el vector f0
+		    for(int mediana = -fil_center; mediana <= fil_center; mediana++){
+		      v[mediana + fil_center] = f0[i + mediana];
+		    }
+		    //ordenamos los valores y hacemos la mediana
+		    sort(v, v+fil_size);
+		    //Cogemos el valor central y lo ponemos en lugar de estas muestras
+		    f0[i] = v[fil_center];
+		  }
 	
   * Métodos alternativos a la autocorrelación: procesado cepstral, *average magnitude difference function*
     (AMDF), etc.
