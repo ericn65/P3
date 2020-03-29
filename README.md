@@ -21,6 +21,10 @@ Ejercicios básicos
 
 	 NOTA: es más que probable que tenga que usar Python, Octave/MATLAB u otro programa semejante para
 	 hacerlo. Se valorará la utilización de la librería matplotlib de Python.
+	 
+	 Hemos realizado este apartado con MARLAB con el siguiente código:
+	 
+	 <img src="img/WhatsApp Image 2020-03-29 at 12.39.31.jpeg" width="640" align="center">	
 
    * Determine el mejor candidato para el periodo de pitch localizando el primer máximo secundario de la
      autocorrelación. Inserte a continuación el código correspondiente.
@@ -42,6 +46,10 @@ Ejercicios básicos
 
 	    Recuerde configurar los paneles de datos para que el desplazamiento de ventana sea el adecuado, que
 		en esta práctica es de 15 ms.
+
+	<img src="img/WhatsApp Image 2020-03-29 at 12.36.57.jpeg" width="640" align="center">	
+
+
 
       - Use el detector de pitch implementado en el programa `wavesurfer` en una señal de prueba y compare
 	    su resultado con el obtenido por la mejor versión de su propio sistema.  Inserte una gráfica
