@@ -109,8 +109,8 @@ Ejercicios básicos
    * Determine el mejor candidato para el periodo de pitch localizando el primer máximo secundario de la
      autocorrelación. Inserte a continuación el código correspondiente.
      
-     		Para determinar el valor hemos usado los valores deducibles de las lecturas para realizar la práctica y de las 
-		gráficas que nos presenta matlab i wavesurfer.
+    	Para determinar el valor hemos usado los valores deducibles de las lecturas para realizar la práctica y de las 
+	gráficas que nos presenta matlab i wavesurfer.
 		
 		CÓDIGO:
 		
@@ -249,6 +249,9 @@ Aunque el total es mejor con un filtro de 3 muestras hay que mencionar que el Gr
    * Inserte una gráfica en la que se vea con claridad el resultado de su detector de pitch junto al del
      detector de Wavesurfer. Aunque puede usarse Wavesurfer para obtener la representación, se valorará
 	 el uso de alternativas de mayor calidad (particularmente Python).
+	 
+<img src="wavesurfer1.jpeg" width="640" align="center">	
+
    
 
 Ejercicios de ampliación
