@@ -64,7 +64,7 @@ Ejercicios básicos
 	      break;
 	    }
 	  }
-	
+	Hemos incluido el código del eventanado en esta sección ya que tiene relación directa con la resta del procesado.
 
    * Inserte una gŕafica donde, en un *subplot*, se vea con claridad la señal temporal de un sonido sonoro
      y su periodo de pitch; y, en otro *subplot*, se vea con claridad la autocorrelación de la señal y la
@@ -101,7 +101,9 @@ Ejercicios básicos
 		subplot(3,1,3)
 		plot(cor)
 		ylabel('Autocorrelació')
-		 <img src="matlab1.jpeg" width="640" align="center">	
+	
+	<img src="matlab1.jpeg" width="640" align="center">	
+	<img src="matlab2.jpeg" width="640" align="center">
 
    * Determine el mejor candidato para el periodo de pitch localizando el primer máximo secundario de la
      autocorrelación. Inserte a continuación el código correspondiente.
@@ -179,10 +181,10 @@ Ejercicios básicos
 - Una vez completados los puntos anteriores, dispondrá de una primera versión del detector de pitch. El 
   resto del trabajo consiste, básicamente, en obtener las mejores prestaciones posibles con él.
 
-	Para conseguir los mejores valores posibles para nuestro código hemos cogido los valores igual que en el apartado anterior.
-	Para ajustarlos aún más, alrededor de los valores calculados hemos ido subiendo o bajándolos en un margen lógico para 
-	mejorar el rendimiento de nuestro código, ya que los cáclulos y visionados de lecturas y gráficas no son los mismos que en 
-	la práctica.
+	Para conseguir los mejores valores posibles para nuestro código hemos cogido los valores igual que en el apartado
+	anterior. Para ajustarlos aún más, alrededor de los valores calculados hemos ido subiendo o bajándolos en un 
+	margen lógico para mejorar el rendimiento de nuestro código, ya que los cáclulos y visionados de lecturas y gráficas
+	no son los mismos que en la práctica.
 	
 
   * Utilice el programa `wavesurfer` para analizar las condiciones apropiadas para determinar si un
@@ -353,7 +355,20 @@ Ejercicios de ampliación
   También se valorará la realización de un estudio de los parámetros involucrados. Por ejemplo, si se opta
   por implementar el filtro de mediana, se valorará el análisis de los resultados obtenidos en función de
   la longitud del filtro.
+  
+  
    
+*CONCLUSIONES*
+--------------
+Hemos conseguido realizar un detector con un F_Score suficientemente bueno (89.66%), habiendo sido capaces 
+esta vez de entender mucho mejor la práctica realizando los ejercicios opcionales y aprendiendo un poco más 
+del paradigma de C++. Además, las gráficas las hemos realizado en MATLAB, consiguiendo no dejar en un cajón
+los conocimientos que ambos tenemos de ese programa. 
+Como siempre, las partes que más nos ha costado de la práctica han sido dominar el uso del terminal, que 
+nos lleva siempre el tiempo equivalente a la primera sesión junto con leerse la documentación. El segundo
+problema ha sido entender el código que teníamos previo a nuestra implementación para poder sacarle todo su 
+partido.
+En general, esta práctica nos ha ido mejor que la anterior, habiendo entendido mejor el código. 
 
 
 
