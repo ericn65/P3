@@ -1,4 +1,4 @@
-fs = 44100;
+fs = 16000;
 [audioIn, fs] = audioread("aud_p1.wav");
 [f0, idx] = pitch(double(audioIn), fs);
 
