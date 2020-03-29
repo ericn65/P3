@@ -74,9 +74,10 @@ Ejercicios básicos
 	 NOTA: es más que probable que tenga que usar Python, Octave/MATLAB u otro programa semejante para
 	 hacerlo. Se valorará la utilización de la librería matplotlib de Python.
 	 
-		 Hemos realizado este apartado con MATLAB con el siguiente código: 
+	 Hemos realizado este apartado con MATLAB con el siguiente código: 
 
-		 Para programarlo se han usado funciones propias de la librería "Audio toolbox" de MATLAB. 
+	 Para programarlo se han usado funciones propias de la librería "Audio toolbox"
+	 de MATLAB. 
 		 
 		 CÓDIGO:
 		 
