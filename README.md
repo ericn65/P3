@@ -16,6 +16,55 @@ Ejercicios básicos
    * Complete el cálculo de la autocorrelación e inserte a continuación el código correspondiente.
 	La autocorrelación es una operación matemática consistente en correlar una señal con ella misma desplazada. Los valores que
 	no pertenecen los dejamos en "zero-padding".
+	
+	CÓDIGO:
+	
+	  void PitchAnalyzer::autocorrelation(const vector<float> &x, vector<float> &r) const {
+	   for (unsigned int l = 0; l < r.size(); ++l) {
+	      /// \TODO Compute the autocorrelation r[l]
+	      r[l] = 0;
+	      for(unsigned int i = l; i < x.size()-l; ++i ){
+		r[l] += x[i-l]*x[i];
+	      }
+	      r[l] = r[l]/(r.size()-l);
+	      }
+	    if (r[0] == 0.0F) //to avoid log() and divide zero 
+	      r[0] = 1e-10; 
+	  }
+	
+	  void PitchAnalyzer::set_window(Window win_type) {
+
+	    if (frameLen == 0)
+	      return;
+	    window.resize(frameLen);
+	    switch (win_type) {
+	    case HAMMING:
+	      {
+		unsigned int n;
+		float a = 0.5432; //Información obtenida de internet
+		float b = 0.4592; //Ídem
+
+		for(n=0; n < frameLen; n++){
+		  window[n] = a - b*cos(2*M_PI*n/(frameLen-1));
+		}
+	      }
+	      /// \TODO Implement the Hamming window
+
+	      break;
+	    case RECT:
+	      {
+		unsigned int i;
+		for(i = 0; i < frameLen ; i++){
+		  window[i] = 1/frameLen;
+		}
+	      }
+	      break;
+	    default:
+	      window.assign(frameLen, 1);
+	      break;
+	    }
+	  }
+	
 
    * Inserte una gŕafica donde, en un *subplot*, se vea con claridad la señal temporal de un sonido sonoro
      y su periodo de pitch; y, en otro *subplot*, se vea con claridad la autocorrelación de la señal y la
@@ -37,10 +86,72 @@ Ejercicios básicos
      		Para determinar el valor hemos usado los valores deducibles de las lecturas para realizar la práctica y de las 
 		gráficas que nos presenta matlab i wavesurfer.
 		
-		{CODI}
+		CÓDIGO:
+		
+		 float PitchAnalyzer::compute_pitch(vector<float> & x) const {
+		    if (x.size() != frameLen)
+		      return -1.0F;
+
+		    //Window input frame
+		    for (unsigned int i=0; i<x.size(); ++i)
+		      x[i] *= window[i];
+
+		    vector<float> r(npitch_max);
+
+		    //Compute correlation
+		    autocorrelation(x, r);
+
+		    vector<float>::const_iterator iR = r.begin(), iRMax = iR; //, iREnd = r.end();
+
+		    /// \TODO 
+			/// Find the lag of the maximum value of the autocorrelation away from the origin.<br>
+			/// Choices to set the minimum value of the lag are:
+			///    - The first negative value of the autocorrelation.
+			///    - The lag corresponding to the maximum value of the pitch.
+		    ///	   .
+			/// In either case, the lag should not exceed that of the minimum value of the pitch.
+
+		    /*Asignaremos unos límites superior e inferior a las frecuencias del pitch, 
+		    a base de prueba y error vemos los valores que mejor resultado dan son 60 y 235, de base partimos de 60 y 400.
+		    ANOTACIÓN: max_element retorna el valor máximo de un vector cuyo rango está contenido entre (A y B),
+		    en este caso A=r.begin()+f_min, y B=r.begin()+f_max*/
+
+		    unsigned int lag = iRMax - r.begin();
+		    unsigned int f_min = 60, f_max = 235;
+
+		    lag=max_element(r.begin()+f_min, r.begin()+f_max)-r.begin();
+		    float pot=10*log10(r[0]);   
+
+		    //You can print these (and other) features, look at them using wavesurfer
+		    //Based on that, implement a rule for unvoiced
+		    //change to #if 1 and compile
+		    #if 0 
+		    if (r[0] > 0.0F)
+		      cout << pot << '\t' << r[1]/r[0] << '\t' << r[lag]/r[0] << endl;
+		    #endif
+		    if (unvoiced(pot, r[1]/r[0], r[lag]/r[0]))
+		      return 0;
+		    else
+		      return (float) samplingFreq/(float) lag;
+		  }
+		 }
+		
 
    * Implemente la regla de decisión sonoro o sordo e inserte el código correspondiente.
-
+   
+	 CÓDIGO:
+	 
+	 bool PitchAnalyzer::unvoiced(float pot, float r1norm, float rmaxnorm) const {
+	    /// \TODO Implement a rule to decide whether the sound is voiced or not.
+	    /// * You can use the standard features (pot, r1norm, rmaxnorm),
+	    ///   or compute and use other ones.
+	    if((pot < -39 || r1norm <= 0.83) && rmaxnorm < 0.55){
+	      return true;
+	    }    
+	    else{
+	      return false;
+	    }
+	  }
 
 - Una vez completados los puntos anteriores, dispondrá de una primera versión del detector de pitch. El 
   resto del trabajo consiste, básicamente, en obtener las mejores prestaciones posibles con él.
@@ -50,7 +161,6 @@ Ejercicios básicos
 	mejorar el rendimiento de nuestro código, ya que los cáclulos y visionados de lecturas y gráficas no son los mismos que en 
 	la práctica.
 	
-	{CODI}
 
   * Utilice el programa `wavesurfer` para analizar las condiciones apropiadas para determinar si un
     segmento es sonoro o sordo. 
@@ -82,6 +192,33 @@ Ejercicios básicos
   * Optimice los parámetros de su sistema de detección de pitch e inserte una tabla con las tasas de error
     y el *score* TOTAL proporcionados por `pitch_evaluate` en la evaluación de la base de datos 
 	`pitch_db/train`..
+	
+	Evaluación *ciega* del detector
+-------------------------------
+Los resultados finales de nuestro detector tras la realización de los ejercicios es:
+Si usamos un filtro de mediana con 3 muestras da:
+### Summary
+Num. frames:	11200 = 7045 unvoiced + 4155 voiced
+Unvoiced frames as voiced:  	251/7045 (3.56 %)
+Voiced frames as unvoiced:  	422/4155 (10.16 %)
+Gross voiced errors (+20.00 %): 219/3733 (5.87 %)
+MSE of fine errors: 	2.95 %
+
+===>	TOTAL:  89.66 %
+--------------------------
+
+Si usamos un filtro de mediana con 5 muestras da:
+### Summary
+Num. frames:	11200 = 7045 unvoiced + 4155 voiced
+Unvoiced frames as voiced:  	244/7045 (3.46 %)
+Voiced frames as unvoiced:  	427/4155 (10.28 %)
+Gross voiced errors (+20.00 %): 186/3728 (4.99 %)
+MSE of fine errors: 	3.31 %
+
+===>	TOTAL:  89.50 %
+--------------------------
+
+Aunque el total es mejor con un filtro de 3 muestras hay que mencionar que el Gross voiced errors es un poco mejor cuando el filtro es de 5 muestras.
 
    * Inserte una gráfica en la que se vea con claridad el resultado de su detector de pitch junto al del
      detector de Wavesurfer. Aunque puede usarse Wavesurfer para obtener la representación, se valorará
@@ -107,22 +244,75 @@ Ejercicios de ampliación
   Entre las posibles mejoras, puede escoger una o más de las siguientes:
 
   * Técnicas de preprocesado: filtrado paso bajo, *center clipping*, etc.
-  {CODI}
+ 
   	*LPF*: usar un filtro paso bajo lineal nos empeora la detección, ya que "se come" muchas frecuencias necesarias para
 	distinguir entre sonidos. 
 	Código de nuestra implementación NO usada en el programa definitivo:
 	
 	*Center Clipping*: esta técnica nos dá una mejora visible de resultado. El código usado es el siguiente:
 
+	CÓDIGO:
+	
+	  //Low Pass Filter --> no funciona
+	  //Filtro promediador sacado de wikipedia: 1/A*(x[n]+x[n-1]) donde alfa=1/A
+	  /*float alfa = 0.89; 
+	  for(unsigned int p_bajo = 2; p_bajo < x.size(); ++p_bajo){
+	    x[p_bajo]= alfa*x[p_bajo] + (1-alfa)*x[p_bajo-1]; 
+	  }*/
+	  
+	 //Centre-clipping sin offset --> mejora entre un 5% y 7% el total
+	 /* float val_max=*max_element(x.begin(),x.end());
+	  float th_clip=0.058*val_max;
+	  unsigned int i;
+
+	  for(i=0;i<x.size();i++){
+	    if(abs(x[i])<=th_clip)
+	      x[i]=0;
+	  }*/
+
+	  //Centre-clipping con offset --> mejora un poco el total respecto la variante sin offset
+	  float val_max=*max_element(x.begin(),x.end());
+	  float th_clip=0.0485*val_max;
+	  unsigned int i;
+
+	  for(i=0;i<x.size();i++){
+	    if(x[i]>th_clip){
+	      x[i]=x[i]-th_clip;
+	    } 
+	    else if(x[i]<-th_clip){
+	      x[i]=x[i]+th_clip;
+	    }  
+	    else{
+	      x[i]=0;
+	    }     
+	  }
+	
+	El filtro paso bajo no lo usamos dado que afecta negativamente al resultado final, tanto el clipping con o sin offset dan buenos resultados pero elegimos el clipping con offset porqué da unas decimas más en el porcentaje total final.
 	
   * Técnicas de postprocesado: filtro de mediana, *dynamic time warping*, etc.
   
   	*Median filter*: para terminar de mejorar nuestro programa hemos querido usar un filtro de mediana. Al tratarse de un 
 	filtro paso bajo no lineal consideramos que mejora suficiente nuestro código para ser implementado en la versión final.
-	{CODI}
+	
 	Para programarlo nos hemos basado en el conocimiento de clase y estas 2 webs:
 	https://www.geeksforgeeks.org/noise-removal-using-median-filter-in-c/
 	http://ceur-ws.org/Vol-1543/p1.pdf
+	
+	//Median filter
+
+	  int fil_size = 5; //Número que nos dá mejor F_Score
+	  int fil_center = fil_size/2;
+	  float v[fil_size]; 
+	  for(unsigned int i = fil_center; i < f0.size()-fil_center; i++){
+	    //i es la posición que ha de recorrer por todo el vector f0
+	    for(int mediana = -fil_center; mediana <= fil_center; mediana++){
+	      v[mediana + fil_center] = f0[i + mediana];
+	    }
+	    //ordenamos los valores y hacemos la mediana
+	    sort(v, v+fil_size);
+	    //Cogemos el valor central y lo ponemos en lugar de estas muestras
+	    f0[i] = v[fil_center];
+	  }
 	
   * Métodos alternativos a la autocorrelación: procesado cepstral, *average magnitude difference function*
     (AMDF), etc.
@@ -142,32 +332,6 @@ Ejercicios de ampliación
   la longitud del filtro.
    
 
-Evaluación *ciega* del detector
--------------------------------
-Los resultados finales de nuestro detector tras la realización de los ejercicios es:
-Si usamos un filtro de mediana con 3 muestras el gross voiced errors da:
-### Summary
-Num. frames:	11200 = 7045 unvoiced + 4155 voiced
-Unvoiced frames as voiced:  	251/7045 (3.56 %)
-Voiced frames as unvoiced:  	422/4155 (10.16 %)
-Gross voiced errors (+20.00 %): 219/3733 (5.87 %)
-MSE of fine errors: 	2.95 %
-
-===>	TOTAL:  89.66 %
---------------------------
-
-Si usamos un filtro de mediana con 5 muestras el gross voiced errors da:
-### Summary
-Num. frames:	11200 = 7045 unvoiced + 4155 voiced
-Unvoiced frames as voiced:  	244/7045 (3.46 %)
-Voiced frames as unvoiced:  	427/4155 (10.28 %)
-Gross voiced errors (+20.00 %): 186/3728 (4.99 %)
-MSE of fine errors: 	3.31 %
-
-===>	TOTAL:  89.50 %
---------------------------
-
-Pudiendo concluir que el tamaño óptimo del filtro de mediana es 3. 
 
 
 
