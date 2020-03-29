@@ -77,7 +77,30 @@ Ejercicios básicos
 		 Hemos realizado este apartado con MATLAB con el siguiente código: 
 
 		 Para programarlo se han usado funciones propias de la librería "Audio toolbox" de MATLAB. 
+		 
+		 CÓDIGO:
+		 
+		clc;
+		clear all;
+		close all;
+		fs = 16000;
+		[audioIn, fs] = audioread("pav_2321.wav");
+		[f0, idx] = pitch(double(audioIn), fs);
 
+		[cor,l] = xcorr(audioIn);
+
+		subplot(3,1,1)
+		plot(audioIn)
+		ylabel('Amplitud')
+
+		subplot(3,1,2)
+		plot(idx,f0)
+		ylabel('Pitch (Hz)')
+		xlabel('Numb Sampler')
+
+		subplot(3,1,3)
+		plot(cor)
+		ylabel('Autocorrelació')
 		 <img src="matlab1.jpeg" width="640" align="center">	
 
    * Determine el mejor candidato para el periodo de pitch localizando el primer máximo secundario de la
